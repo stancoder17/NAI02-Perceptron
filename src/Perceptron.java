@@ -7,17 +7,30 @@ public class Perceptron {
     private final double alpha;
     private final double beta;
     private final int dimension;
+    private final int numberOfIterations;
 
     public Perceptron(int dimension) {
         this.dimension = dimension;
         this.alpha = 0.01;
         this.beta = 0.01;
         this.threshold = Math.random();
+        this.numberOfIterations = 250;
         weights = new ArrayList<>();
 
         for (int i = 0; i < dimension; i++)
             weights.add(Math.random());
+    }
 
+    public Perceptron(int dimension, double alpha, int numberofIterations) {
+        this.dimension = dimension;
+        this.alpha = alpha;
+        this.beta = 0.01;
+        this.threshold = Math.random();
+        this.numberOfIterations = numberofIterations;
+        weights = new ArrayList<>();
+
+        for (int i = 0; i < dimension; i++)
+            weights.add(Math.random());
     }
 
     public int compute(List<Double> inputs) {
