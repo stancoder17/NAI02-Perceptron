@@ -4,9 +4,9 @@ import java.util.List;
 public class Perceptron {
     private List<Double> weights;
     private double threshold; // theta
-    private double alpha;
-    private double beta;
-    private int dimension;
+    private final double alpha;
+    private final double beta;
+    private final int dimension;
 
     public Perceptron(int dimension) {
         this.dimension = dimension;
@@ -52,8 +52,17 @@ public class Perceptron {
         }
 
         weights = new_weights;
-        threshold -= alpha * (decision - y);
+        threshold = threshold - beta * (decision - y);
     }
 
-
+    @Override
+    public String toString() {
+        return "Perceptron{" +
+                "weights=" + weights +
+                ", threshold=" + threshold +
+                ", alpha=" + alpha +
+                ", beta=" + beta +
+                ", dimension=" + dimension +
+                '}';
+    }
 }
