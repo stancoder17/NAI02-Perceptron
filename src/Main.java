@@ -1,40 +1,22 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Perceptron perceptron;
-        try {
-            perceptron = new Perceptron(getNumberOfDimensions(new File("perceptron.data")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        int numberOfDimensions;
 
         try {
-            for (int i = 0; i < 100; i++) {
-                BufferedReader reader_train = new BufferedReader(new FileReader("perceptron.data"));
-                String line_train;
+            numberOfDimensions = new BufferedReader(new FileReader("perceptron.data"))
+                    .readLine()
+                    .split(",")
+                    .length - 1;
+            perceptron = new Perceptron(numberOfDimensions);
+            perceptronLearn(perceptron);
 
-                while ((line_train = reader_train.readLine()) != null) {
-                    String[] line_split = line_train.split(",");
-                    String decisionAttribute = line_split[line_split.length - 1];
-
-                    List<Double> attributes = getAttributes(line_split);
-                    int decision_correct = decisionAttribute.equals("Iris-versicolor") ? 1 : 0;
-                    int decision_computed = perceptron.compute(attributes);
-
-                    // Learn if wrong
-                    if (decision_computed != decision_correct) {
-                        perceptron.learn(attributes, decision_correct);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        try {
             int correctCount = 0;
             int incorrectCount = 0;
 
@@ -45,7 +27,7 @@ public class Main {
                 String[] line_split = line_test.split(",");
                 String decisionAttribute = line_split[line_split.length - 1];
 
-                List<Double> line_attributes = getAttributes(line_split);
+                List<Double> line_attributes = getAttributes(Arrays.copyOfRange(line_split, 0, line_split.length - 1));
                 int decision_correct = decisionAttribute.equals("Iris-versicolor") ? 1 : 0;
                 int decision_computed = perceptron.compute(line_attributes);
 
@@ -64,22 +46,71 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        System.out.println("=============================================");
+
+        // User input
+        Scanner scanner = new Scanner(System.in);
+        double alpha;
+        int numberOfIterations;
+        Perceptron userPerceptron;
+        try {
+            System.out.println("== Parameters for Perceptron ==");
+            System.out.print("Input alpha: ");
+            alpha = Double.parseDouble(scanner.nextLine());
+            System.out.print("Input number of iterations: ");
+            numberOfIterations = Integer.parseInt(scanner.nextLine());
+            userPerceptron = new Perceptron(numberOfDimensions, alpha, numberOfIterations);
+            perceptronLearn(userPerceptron);
+            System.out.print("Input a " + numberOfDimensions + "-dimensional vector to test (x,y,z...,n) or say \"quit\" to exit the program: ");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        String userInput = scanner.nextLine();
+        while (!userInput.equals("quit")) {
+            String[] input_split = userInput.split(",");
+
+            if (input_split.length != numberOfDimensions) {
+                System.out.print("Incorrect input. Please provide a " + numberOfDimensions + "-dimensional vector (x,y,z...,n) or say \"quit\" to exit the program: ");
+                userInput = scanner.nextLine();
+                continue;
+            }
+            int decision = perceptron.compute(getAttributes(input_split));
+            System.out.println("Etiquette for inputted vector: " + (decision == 1 ? "Iris-versicolor" : "Iris-virginica"));
+            System.out.print("Input another vector or say \"quit\" to exit the program: ");
+            userInput = scanner.nextLine();
+        }
     }
 
     private static List<Double> getAttributes(String[] line_split) {
         List<Double> attributes = new ArrayList<>();
 
-        for (int i = 0; i < line_split.length - 1; i++) {
-            attributes.add(Double.parseDouble(line_split[i]));
+        for (String s : line_split) {
+            attributes.add(Double.parseDouble(s));
         }
 
         return attributes;
     }
 
-    private static int getNumberOfDimensions(File file) throws IOException {
-        return new BufferedReader(new FileReader(file))
-                .readLine()
-                .split(",")
-                .length - 1;
+    private static void perceptronLearn(Perceptron perceptron) throws IOException {
+        for (int i = 0; i < perceptron.numberOfIterations; i++) {
+            BufferedReader reader_train = new BufferedReader(new FileReader("perceptron.data"));
+            String line_train;
+
+            while ((line_train = reader_train.readLine()) != null) {
+                String[] line_split = line_train.split(",");
+                String decisionAttribute = line_split[line_split.length - 1];
+
+                List<Double> attributes = getAttributes(Arrays.copyOfRange(line_split, 0, line_split.length - 1));
+                int decision_correct = decisionAttribute.equals("Iris-versicolor") ? 1 : 0;
+                int decision_computed = perceptron.compute(attributes);
+
+                // Learn if wrong
+                if (decision_computed != decision_correct) {
+                    perceptron.learn(attributes, decision_correct);
+                }
+            }
+        }
     }
 }

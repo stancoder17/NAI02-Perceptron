@@ -7,7 +7,7 @@ public class Perceptron {
     private final double alpha;
     private final double beta;
     private final int dimension;
-    private final int numberOfIterations;
+    final int numberOfIterations;
 
     public Perceptron(int dimension) {
         this.dimension = dimension;
@@ -34,11 +34,6 @@ public class Perceptron {
     }
 
     public int compute(List<Double> inputs) {
-        if (inputs.size() != dimension) {
-            System.out.println("Inputs size != dimension");
-            return -1;
-        }
-
         double sum = 0;
         for (int i = 0; i < dimension; i++)
             sum += inputs.get(i) * weights.get(i);
@@ -66,6 +61,10 @@ public class Perceptron {
 
         weights = new_weights;
         threshold = threshold - beta * (decision - y);
+    }
+
+    public int getDimension() {
+        return dimension;
     }
 
     @Override
