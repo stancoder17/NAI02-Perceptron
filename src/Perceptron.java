@@ -30,19 +30,6 @@ public class Perceptron {
             weights.add(Math.random());
     }
 
-    public int compute(List<Double> inputs) {
-        double sum = 0;
-        for (int i = 0; i < dimension; i++)
-            sum += inputs.get(i) * weights.get(i);
-
-        double net = sum - threshold;
-
-        if (net >= 0)
-            return 1;
-        else
-            return 0;
-    }
-
     public void learn(List<Double> inputs, int decision) {
         if (inputs.size() != dimension) {
             System.out.println("Inputs size != dimension");
@@ -58,6 +45,19 @@ public class Perceptron {
 
         weights = new_weights;
         threshold = threshold - beta * (decision - y);
+    }
+
+    public int compute(List<Double> inputs) {
+        double sum = 0;
+        for (int i = 0; i < dimension; i++)
+            sum += inputs.get(i) * weights.get(i);
+
+        double net = sum - threshold;
+
+        if (net >= 0)
+            return 1;
+        else
+            return 0;
     }
 
     public int getDimension() {

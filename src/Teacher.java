@@ -1,41 +1,54 @@
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Teacher {
-    private Perceptron perceptron;
-    private File trainFile;
-    private File testFile;
+    private ArrayList<List<Double>> trainingInputs;
+    private ArrayList<Integer> trainingOutputs;
+    private final String trainFileName;
+    private final Map<String, Integer> labels;
 
-    public Teacher(Perceptron perceptron, File trainFile, File testFile) {
-        this.perceptron = perceptron;
-        this.trainFile = trainFile;
-        this.testFile = testFile;
+    public Teacher(Perceptron perceptron, String trainFileName) {
+        this.trainFileName = trainFileName;
+        this.labels = new HashMap<>();
     }
 
-    public void teach(int numberOfIterations, String one) throws IOException {
-        /*for (int i = 0; i < numberOfIterations; i++) {
-            BufferedReader reader_train = new BufferedReader(new FileReader(trainFile));
-            String line_train;
-
-            while ((line_train = reader_train.readLine()) != null) {
-                String[] line_split = line_train.split(",");
-                String decisionAttribute = line_split[line_split.length - 1];
-
-                List<Double> attributes = Main.getAttributes(Arrays.copyOfRange(line_split, 0, line_split.length - 1));
-                int decision_correct = decisionAttribute.equals(one) ? 1 : 0;
-                int decision_computed = perceptron.compute(attributes);
-
-                // Learn if wrong
-                if (decision_computed != decision_correct) {
-                    perceptron.learn(attributes, decision_correct);
+    public void loadData(String fileName, ArrayList<List<Double>> inputs, ArrayList<Integer> outputs) {
+        try (BufferedReader in = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = in.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
+                String[] tokens = line.split(",");
+                int n = tokens.length;
+                List<Double> attributes = new ArrayList<>();
+                for (int j = 0; j < n - 1; j++) {
+                    attributes.add(Double.parseDouble(tokens[j].trim()));
                 }
+                String labelName = tokens[n - 1];
+                int label;
+                if (labels.isEmpty()) {
+                    label = 1;
+                } else {
+                    label = labels.getOrDefault(labelName, 0);
+                }
+                labels.put(labelName, label);
+
+                inputs.add(attributes);
+                outputs.add(label);
             }
-        }*/
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+    public void train(Perceptron perceptron, int numberOfIterations) {
+        loadData(trainFileName, trainingInputs, trainingOutputs);
 
+        for (int i = 0; i < numberOfIterations; i++) {
+            for (int j = 0; j < trainingInputs.size(); j++) {
+                perceptron.learn(trainingInputs.get(j), trainingOutputs.get(j));
+            }
+        }
+    }
 }
