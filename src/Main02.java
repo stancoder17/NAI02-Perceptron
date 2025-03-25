@@ -11,6 +11,7 @@ public class Main02 {
         DataLoader dataLoader = new DataLoader(trainFileName);
         Perceptron perceptron = new Perceptron(dataLoader.getDimensions());
 
+
         teacher.train(perceptron, 100);
     }
 }

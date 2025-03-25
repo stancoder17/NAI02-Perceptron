@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,8 +10,7 @@ public class DataLoader {
         this.fileName = fileName;
     }
 
-    public void loadData(ArrayList<List<Double>> inputs, ArrayList<Integer> outputs) {
-        Map<String, Integer> labels = new HashMap<>();
+    public void loadData(ArrayList<List<Double>> inputs, ArrayList<Integer> outputs, Map<String, Integer> labels) {
         try (BufferedReader in = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = in.readLine()) != null) {
