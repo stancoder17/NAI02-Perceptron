@@ -9,7 +9,7 @@ public class Teacher {
     private final String trainFileName;
     private final Map<String, Integer> labels;
 
-    public Teacher(Perceptron perceptron, String trainFileName) {
+    public Teacher(String trainFileName) {
         this.trainFileName = trainFileName;
         this.labels = new HashMap<>();
     }
@@ -50,5 +50,9 @@ public class Teacher {
                 perceptron.learn(trainingInputs.get(j), trainingOutputs.get(j));
             }
         }
+    }
+
+    public int getDimensions() {
+        return trainingInputs.getFirst().size();
     }
 }
