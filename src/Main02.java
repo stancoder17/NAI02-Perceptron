@@ -8,7 +8,8 @@ public class Main02 {
         String trainFileName = scanner.nextLine();
 
         Teacher teacher = new Teacher(trainFileName);
-        Perceptron perceptron = new Perceptron(teacher.getDimensions());
+        DataLoader dataLoader = new DataLoader(trainFileName);
+        Perceptron perceptron = new Perceptron(dataLoader.getDimensions());
 
         teacher.train(perceptron, 100);
     }
