@@ -13,5 +13,6 @@ public class Main03 {
 
         Evaluator evaluator = new Evaluator(testFileName, teacher);
         evaluator.evaluate(perceptron);
+        evaluator.evaluteWithK_NN();
     }
 }
